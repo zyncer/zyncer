@@ -1,10 +1,10 @@
 <template>
-  <form @submit="submit">
+<div>
     <fieldset>
       <input type="text" placeholder="Wallet Address" v-model="waddress">
     </fieldset>
-    <input class="button-primary" type="submit" value="Query">
-  </form>
+    <input class="button-primary" type="button" value="Query" @click="$emit('eventUpd', waddress)">
+</div>
 </template>
 
 <script>

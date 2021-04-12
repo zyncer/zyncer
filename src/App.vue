@@ -1,20 +1,18 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <wallet-address/>
+    <img alt="Vue logo" src="./assets/logo.png" width="250" height="250">
     <portfolio/>
   </div>
 </template>
 
 <script>
 import Portfolio from './components/Portfolio.vue';
-import WalletAdress from './components/WalletAddress.vue';
+
 
 export default {
   name: 'App',
   components: {
-    Portfolio,
-    'wallet-address': WalletAdress
+    Portfolio
   }
 }
 </script>
@@ -25,7 +23,15 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  color: #ffffff;
+  background: #000;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+input, select, textarea{
+    color:#ffffff;
+}
+body {
+  background: #000;
 }
 </style>

@@ -1,16 +1,17 @@
 <template>
 <!--
   <div :key="txs.id">-->
-    <div :key="tx.token">
-      <h4>{{ asset.symbol }} </h4><h5> Cost ({{ Math.round(tx.masset*10000)/10000 }}{{ asset.symbol }} + {{ tx.ust }}ust) Price {{ to4(tx.ust/tx.masset) }}ust
+    <div :key="tx.token" v-if="to3(toPercent(tx.share,toNumber(asset.positions.lpShares))) != 0">
+      <h4><b>{{ asset.symbol }}</b> APR: {{ to3(asset.statistic.apr*100) }}% APY: {{ to3(asset.statistic.apy*100) }}%</h4>
+      <h5>Average Cost ({{ Math.round(tx.masset*10000)/10000 }}{{ asset.symbol }} + {{ to4(tx.ust) }}ust) Price {{ to4(tx.ust/tx.masset) }}ust
         LP {{ to4(tx.share) }} | Pool Share {{ to3(toPercent(tx.share,toNumber(asset.positions.lpShares))) }}
         <br>
         Withdrawal ({{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.pool)/100) }}{{ asset.symbol }} 
         + {{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100) }}ust )
         Swap Price {{ 
-          to4((toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100) /
+          to3((toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100) /
           (toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.pool)/100))
-        }}ust
+        }}ust | Oracle Price {{ to3(asset.prices.oraclePrice) }}ust
         | Unrealized <b>{{ to4(percentChange(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100,tx.ust)) }}% </b>
         <br>
         Cost Value {{
@@ -25,7 +26,7 @@
         {{
            to4((toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100)*2)
          }}ust
-         | Imp Loss
+         | Imp Loss (Including Commission)
          {{
            to4(percentChange(to4((toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100)*2),
            to4(tx.ust + (tx.masset*(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100) /
@@ -67,6 +68,7 @@ query TokenStr($token: String!) {
     }
     statistic{
       apr
+      apy
     }
   }
 }

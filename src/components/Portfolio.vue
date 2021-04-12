@@ -3,7 +3,13 @@
     <!--
     <txs v-for="txs in txs" :key="txs.id" :txs="txs"></txs>
     -->
-    
+    <wallet-address @eventUpd="updAddress"></wallet-address>
+<!--
+    <h3>{{ test }}<br>{{
+    parseInt(test.substr(test.indexOf(',')+1,test.indexOf('terra')-test.indexOf(',')-1))/100000
+    }}
+    </h3>
+-->
     <txs v-for="tx in sumliquidation" :key="tx.token" :tx="tx"></txs> 
 
 <!--
@@ -16,12 +22,14 @@
     <!--<h3 v-for="liq in sumliquidation" :key="liq.id">{{ liq.id }}</h3>-->
     <!-- <h3>{{ assets }}</h3> -->
     <!--<h3>{{ sumliquidation }}</h3>-->
+    
  
   </div>
 </template>
 
 <script>
 import PortfolioItem from './PortfolioItem.vue';
+import WalletAdress from './WalletAddress.vue';
 import gql from "graphql-tag";
 import Txs from './Txs.vue';
 
@@ -39,8 +47,9 @@ query{
 `;
 
 const GET_TXS = gql`
-query{
-  txs(account: "terra1gyr4rdgy8gceavlsvwjg0sp055wr0jgrr4dvgj"){
+query Address($waddress: String!) 
+{
+  txs(account: $waddress, limit: 1000){
     id
     type
     data
@@ -53,13 +62,15 @@ query{
 
 
 export default {
-  components: { PortfolioItem, Txs },
+  components: { PortfolioItem, Txs , 'wallet-address': WalletAdress},
   name: "Portfolio",
   component: { 'portfolio-item': PortfolioItem, 'txs': Txs },
   data() {
     return {
       assets: [],
-      txs: []
+      txs: [],
+      test: "3143112557uusd, 6165013terra1jsxngqasf2zynj5kyh0tgq9mj3zksa5gk35j4k",
+      waddress: ""
     };
   },
   computed: {
@@ -77,14 +88,29 @@ export default {
         ,{})*/
       let sumsArray = {}
       //let sums = {}
-      this.txs.filter(tx => tx.type === "PROVIDE_LIQUIDITY").forEach(item =>{
+      this.txs.filter(tx => tx.type === "PROVIDE_LIQUIDITY" || tx.type === "WITHDRAW_LIQUIDITY").sort((a,b) => {
+        if (a.type === "PROVIDE_LIQUIDITY" && b.type === "WITHDRAW_LIQUIDITY") return -1;
+        if (a.type === "WITHDRAW_LIQUIDITY" && b.type === "PROVIDE_LIQUIDITY") return 1;
+        return 0;
+      }).forEach(item =>{
         //sums = sumsArray[item.token]
         //if(sums){
         if(sumsArray[item.token]){
+          if(item.type === "PROVIDE_LIQUIDITY"){
+            sumsArray[item.token].share += parseInt(item.data.share)/1000000;
+            sumsArray[item.token].masset += parseInt(item.data.assets.substr(0, item.data.assets.indexOf('terra')))/1000000
+            sumsArray[item.token].ust += parseInt(item.data.assets.substr(item.data.assets.indexOf(',')+1, item.data.assets.indexOf('uusd')-1-item.data.assets.indexOf(',')))/1000000
+          }
+          else{
+            sumsArray[item.token].share -= parseInt(item.data.withdrawnShare)/1000000;
+            sumsArray[item.token].masset -= parseInt(item.data.refundAssets.substr(item.data.refundAssets.indexOf(',')+1,item.data.refundAssets.indexOf('terra')-item.data.refundAssets.indexOf(',')-1))/1000000;
+            sumsArray[item.token].ust -= parseInt(item.data.refundAssets.substr(0, item.data.refundAssets.indexOf('uusd')))/1000000;
+            //if(sumsArray[item.token].share === 0){
+              //sumsArray.splice(item.token,1);
+            //}
+          }
           //sums.share += parseInt(item.data.share)/1000000
-          sumsArray[item.token].share += parseInt(item.data.share)/1000000;
-          sumsArray[item.token].masset += parseInt(item.data.assets.substr(0, item.data.assets.indexOf('terra')))/1000000
-          sumsArray[item.token].ust += parseInt(item.data.assets.substr(item.data.assets.indexOf(',')+1, item.data.assets.indexOf('uusd')-1-item.data.assets.indexOf(',')))/1000000
+
         } else {
           sumsArray[item.token] = { token: item.token, share: parseInt(item.data.share)/1000000 , masset: parseInt(item.data.assets.substr(0, item.data.assets.indexOf('terra')))/1000000 
           , ust: parseInt(item.data.assets.substr(item.data.assets.indexOf(',')+1, item.data.assets.indexOf('uusd')-1-item.data.assets.indexOf(',')))/1000000}
@@ -102,12 +128,23 @@ export default {
         //.reduce((acc,tx) => acc + parseInt(tx.data.share)/1000000,0)
       }
   },
+  methods: {
+    updAddress(value) {
+      this.waddress = value;
+    }
+  },
   apollo: {
     assets: {
       query: GET_ASSETS
     },
     txs: {
-      query: GET_TXS
+      query: GET_TXS,
+      variables(){
+        return {
+            //token: this.txs.token
+            waddress: this.waddress
+        }
+      }
     }
   }
 };
