@@ -1,10 +1,10 @@
 <template>
 <!--
   <div :key="txs.id">-->
-    <div :key="tx.token" v-if="to3(toPercent(tx.share,toNumber(asset.positions.lpShares))) != 0">
+    <div :key="tx.token" v-if="to4(toPercent(tx.share,toNumber(asset.positions.lpShares))) != 0">
       <h4><b>{{ asset.symbol }}</b> APR: {{ to3(asset.statistic.apr*100) }}% APY: {{ to3(asset.statistic.apy*100) }}%</h4>
       <h5>Average Cost ({{ Math.round(tx.masset*10000)/10000 }}{{ asset.symbol }} + {{ to4(tx.ust) }}ust) Price {{ to4(tx.ust/tx.masset) }}ust
-        LP {{ to4(tx.share) }} | Pool Share {{ to3(toPercent(tx.share,toNumber(asset.positions.lpShares))) }}
+        LP {{ to4(tx.share) }} | Pool Share {{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))) }}
         <br>
         Withdrawal ({{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.pool)/100) }}{{ asset.symbol }} 
         + {{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100) }}ust )
