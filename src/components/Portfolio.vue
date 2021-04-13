@@ -1,8 +1,8 @@
 <template>
   <div id="portfolio">
     <wallet-address @eventUpd="updAddress"></wallet-address>
-    <h4 class="font-weight-bold alert alert-success" v-if="waddress">Total Unclaimed: {{ to4(totalreward) }} mir
-      <footer class="blockquote-footer">{{ to4(totalreward* Number(mir.prices.price)) }} USD ~ {{ to4(totalreward* Number(mir.prices.price)*33) }} THB</footer>
+    <h4 class="font-weight-bold alert alert-success" v-if="waddress">Total Unclaimed: {{ to4(totalreward) }} mir (Price:{{ Number(mir.prices.price) }})
+      <footer class="blockquote-footer">({{ to4(totalreward* Number(mir.prices.price)) }} USD ~ {{ to4(totalreward* Number(mir.prices.price)*33) }} THB) </footer>
     </h4>
     <table v-if="waddress" class="table table-striped table-bordered table-dark">
       <thead class="thead-light">
