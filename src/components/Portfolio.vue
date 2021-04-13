@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="portfolio">
     <!--
     <txs v-for="txs in txs" :key="txs.id" :txs="txs"></txs>
     -->
@@ -20,7 +20,26 @@
       }}
     </h3>
 -->
-    <txs v-for="tx in sumliquidation" :key="tx.token" :tx="tx" :waddress="waddress" :mir="mir"></txs> 
+    <h3 v-if="waddress">Total Unclaimed: {{ to4(totalreward) }} mir ~  {{ to4(totalreward* Number(mir.prices.price)) }} ust</h3>
+    <table v-if="waddress" class="table table-dark">
+      <thead>
+        <tr>
+          <th scope="col">Symbol</th>
+          <th scope="col">LP Balance/Staked</th>
+          <th scope="col">Withdrawal Pair</th>
+          <th scope="col">Pool Share</th>
+          <th scope="col">Withdrawal Value</th>
+          <th scope="col">Average Cost/Price</th>
+          <th scope="col">Swap Price</th>
+          <th scope="col">Unrealized</th>
+          <th scope="col">Imp Loss</th>
+          <th scope="col">Unclaimed Reward</th>
+        </tr>
+      </thead>
+      <tbody>
+      <txs v-for="tx in sumliquidation" :key="tx.token" :tx="tx" :waddress="waddress" :mir="mir" @updateTotal="updateTotal"></txs> 
+      </tbody>
+    </table>
 
 <!--
     <h3 v-for="tx in sumliquidation" :key="tx.token"> {{ asset.symbol }} {{ tx.token }} Cost {{ tx.masset }} + {{ tx.ust }}</h3>
@@ -29,12 +48,10 @@
 
    <!-- <portfolio-item v-for="m in mir" :key="m.symbol" :m="m"></portfolio-item> -->
    <portfolio-item v-for="asset in assets" :key="asset.symbol" :asset="asset"></portfolio-item>
-   
-    <!--<h3 v-for="liq in sumliquidation" :key="liq.id">{{ liq.id }}</h3>-->
-    <!-- <h3>{{ assets }}</h3> -->
-    <!--<h3>{{ sumliquidation }}</h3>-->
-    
- 
+    <!--<h3 v-for="liq in sumliquidation" :key="liq.id">{{ liq.id }}</h3>
+    <h3>{{ assets }}</h3> 
+    <h3>{{ sumliquidation }}</h3>-->
+
   </div>
 </template>
 
@@ -113,7 +130,8 @@ export default {
       txs: [],
       mir: [],
       //test: "3143112557uusd, 6165013terra1jsxngqasf2zynj5kyh0tgq9mj3zksa5gk35j4k",
-      waddress: ""
+      waddress: "",
+      totalreward: 0
     };
   },
   computed: {
@@ -193,6 +211,9 @@ export default {
     updAddress(value) {
       this.waddress = value;
     },
+    updateTotal(value) {
+      this.totalreward += value;
+    },
     to4: function(num){
       return Math.round(num*10000)/10000;
     },
@@ -219,4 +240,11 @@ export default {
 
 
 </script>
-
+<style>
+#portfolio {
+  margin-left: 0;
+}
+thead {
+  font-size: 1rem;
+}
+</style>

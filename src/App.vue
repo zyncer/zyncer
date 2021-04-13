@@ -31,7 +31,8 @@ export default {
 input, select, textarea{
     color:#ffffff;
 }
-body {
+html, body {
   background: #000;
+  font-size: 0.8rem;
 }
 </style>

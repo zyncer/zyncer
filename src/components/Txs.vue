@@ -1,50 +1,34 @@
 <template>
-<!--
-  <div :key="txs.id">-->
-    <div :key="tx.token" v-if="to4(toPercent(tx.share,toNumber(asset.positions.lpShares))) != 0">
+  <tr :key="tx.token" v-if="to4(toPercent(tx.share,toNumber(asset.positions.lpShares))) != 0">
     <!-- {{ stakeinfo }} <br> {{ poolinfo }} <br> {{ reward }} -->
-      <h4><b>{{ asset.symbol }}</b> APR: {{ to3(asset.statistic.apr*100) }}% APY: {{ to3(asset.statistic.apy*100) }}%</h4>
-      <h6>Stake Position ({{ to4(parseInt(stakeinfo[0].bond_amount)/1000000) }}) | Unclaimed ({{ to4(reward) }} MIR ~ {{ to4(reward* Number(mir.prices.price)) }}ust )</h6>
-      <h5>Average Cost ({{ Math.round(tx.masset*10000)/10000 }}{{ asset.symbol }} + {{ to4(tx.ust) }}ust) Price {{ to4(tx.ust/tx.masset) }}ust
-        LP {{ to4(tx.share) }} | Pool Share {{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))) }}
-        <br>
-        Withdrawal ({{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.pool)/100) }}{{ asset.symbol }} 
-        + {{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100) }}ust )
-        Swap Price {{ 
-          to3((toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100) /
-          (toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.pool)/100))
-        }}ust | Oracle Price {{ to3(asset.prices.oraclePrice) }}ust
-        | Unrealized <b>{{ to4(percentChange(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100,tx.ust)) }}% </b>
-        <br>
-        Cost Value {{
-          to4(tx.ust*2)
-        }}ust
-        | HODL Value {{ 
-          to4(tx.ust + (tx.masset*(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100) /
-          (toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.pool)/100)) )
-
-        }}ust
-        | LP Value
+ 
+      <th scope="row">{{ asset.symbol }}<br>APR: {{ to3(asset.statistic.apr*100) }}%</th>
+      <td><!--LP-->{{ to3(tx.share) }} <!--Staked LP-->({{ to3(parseInt(stakeinfo[0].bond_amount)/1000000) }})</td>
+      <td><!--Withdrawal--> ({{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.pool)/100) }}{{ asset.symbol }} 
+        + {{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100) }}ust )</td>
+      <td><!--Pool Share--> {{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))) }}</td>
+      <td><!--LP Value or Witdrawal Value-->{{ to3((toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100)*2) }}ust</td>
+      <!--<td>({{ Math.round(tx.masset*10000)/10000 }}{{ asset.symbol }} + {{ to4(tx.ust) }}ust) </td>--><!--Average Cost--> 
+      <td><!--Cost Value--> {{ to4(tx.ust*2) }}ust/<!-- Cost Price--> {{ to4(tx.ust/tx.masset) }}ust</td>
+      <td><!--Swap Price--> {{ to3((toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100)/(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.pool)/100))}}ust </td>
+      <td><!--Unrealized--> <b>{{ to4(percentChange(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100,tx.ust)) }}% </b></td>
+      <td><!--Imp Loss (Including Commission)-->
         {{
-           to4((toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100)*2)
-         }}ust
-         | Imp Loss (Including Commission)
-         {{
            to4(percentChange(to4((toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100)*2),
            to4(tx.ust + (tx.masset*(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100) /
           (toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.pool)/100)) )  ))
-         }}%
-      </h5>
-      <hr>
-    <!--
-    <h3 v-if="txs.type == 'PROVIDE_LIQUIDITY'">{{ txs.type }} {{ parseInt(txs.data.share)/1000000 }} {{ asset.symbol }} 
-      {{ parseInt(txs.data.assets.substr(0, txs.data.assets.indexOf('terra')))/1000000 }}
-      {{ parseInt(txs.data.assets.substr(txs.data.assets.indexOf(',')+1, txs.data.assets.indexOf('uusd')-1-txs.data.assets.indexOf(',')))/1000000 }}
-      </h3>
-  -->
-
-  </div>
-
+        }} %
+      </td>
+      <td><!--Unclaimed--> ({{ to4(reward) }} mir ~ {{ to4(reward* Number(mir.prices.price)) }} ust )</td>
+<!--
+      APY: {{ to3(asset.statistic.apy*100) }}%
+      Oracle Price {{ to3(asset.prices.oraclePrice) }}ust
+      HODL Value {{ 
+          to4(tx.ust + (tx.masset*(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100) /
+          (toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.pool)/100)) )
+          }}ust
+-->
+  </tr>
 </template>
 
 <script>
@@ -93,7 +77,10 @@ export default {
     };
   },
   created() {
-    this.rewardInfo(this.waddress, this.tx.token)
+    this.rewardInfo(this.waddress, this.tx.token);
+  },
+  updated() {
+    this.$emit('updateTotal', this.reward);
   },
   methods:{
     toNumber: function(num){
@@ -118,8 +105,8 @@ export default {
         let txt = '';
         const rewardData = await mirror.staking.getRewardInfo(address,token);
         const rewardInfos = rewardData.reward_infos;
-        console.log('\n\nR E W A R D DATA:\n');
-        console.log(rewardInfos);
+        //console.log('\n\nR E W A R D DATA:\n');
+        //console.log(rewardInfos);
         this.stakeinfo = rewardInfos;
         //txt+= rewardInfos;
         
@@ -127,8 +114,8 @@ export default {
             console.log(key);
             const poolData = await mirror.staking.getPoolInfo(tokenData.asset_token);
             //const poolData = await mirror.staking.getPoolInfo(token);
-            console.log('\n\nP O O L DATA:\n');
-            console.log(poolData); console.log('\n');
+            //console.log('\n\nP O O L DATA:\n');
+            //console.log(poolData); console.log('\n');
             this.poolinfo = poolData;
             //const rewardToClaim = (poolData.reward_index - tokenData.index) * tokenData.bond_amount + tokenData.pending_reward;
             const rewardToClaim = (Number(poolData.reward_index) - Number(tokenData.index)) * Number(tokenData.bond_amount) + Number(tokenData.pending_reward);
@@ -158,3 +145,16 @@ export default {
     }
 };
 </script>
+
+<style>
+.display-table {
+    display: table; 
+}
+.display-table > div { 
+    display: table-row; 
+}
+.display-table > div > div { 
+    display: table-cell;
+    padding: 5px;
+}
+</style>
