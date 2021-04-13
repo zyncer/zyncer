@@ -2,15 +2,15 @@
   <tr :key="tx.token" v-if="to4(toPercent(tx.share,toNumber(asset.positions.lpShares))) != 0">
     <!-- {{ stakeinfo }} <br> {{ poolinfo }} <br> {{ reward }} -->
  
-      <th scope="row">{{ asset.symbol }} <footer class="blockquote-footer">Apr: {{ to3(asset.statistic.apr*100) }}% </footer></th>
-      <td><!--LP-->{{ to3(tx.share) }} <!--Staked LP-->({{ to3(parseInt(stakeinfo[0].bond_amount)/1000000) }})</td>
-      <td><!--Withdrawal--> ({{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.pool)/100) }}{{ asset.symbol }} <br>
-        + {{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100) }}ust )</td>
+      <th scope="row">{{ asset.symbol }} <footer id="apr" class="blockquote-footer">Apr: {{ to3(asset.statistic.apr*100) }}% </footer></th>
+      <td><!--LP-->{{ to3(tx.share) }}/<!--Staked LP-->({{ to3(parseInt(stakeinfo[0].bond_amount)/1000000) }})</td>
+      <td><!--Withdrawal--> ({{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.pool)/100) }} {{ asset.symbol }} <br>
+        + {{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100) }} ust )</td>
       <td><!--Pool Share--> {{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))) }}</td>
-      <td><!--LP Value or Witdrawal Value-->{{ to3((toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100)*2) }}ust</td>
+      <td><!--LP Value or Witdrawal Value-->{{ to3((toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100)*2) }} ust</td>
       <!--<td>({{ Math.round(tx.masset*10000)/10000 }}{{ asset.symbol }} + {{ to4(tx.ust) }}ust) </td>--><!--Average Cost--> 
-      <td><!--Cost Value--> {{ to4(tx.ust*2) }}ust <br><!-- Cost Price--> ({{ to4(tx.ust/tx.masset) }}ust)</td>
-      <td><!--Swap Price--> {{ to3((toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100)/(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.pool)/100))}}ust </td>
+      <td><!--Cost Value--> {{ to4(tx.ust*2) }} ust <br><!-- Cost Price--> ({{ to4(tx.ust/tx.masset) }} ust)</td>
+      <td><!--Swap Price--> {{ to3((toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100)/(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.pool)/100))}} ust </td>
       <td v-bind:class="{ 
         'bg-danger': to4(percentChange(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100,tx.ust)) < 0,
          'bg-success' : to4(percentChange(toPercent(tx.share,toNumber(asset.positions.lpShares))*toNumber(asset.positions.uusdPool)/100,tx.ust)) >= 0
@@ -168,5 +168,8 @@ export default {
 .display-table > div > div { 
     display: table-cell;
     padding: 5px;
+}
+#apr {
+  color: greenyellow;
 }
 </style>

@@ -12,7 +12,7 @@
           <th scope="col">Withdrawal Pair</th>
           <th scope="col">Pool Share</th>
           <th scope="col">Withdrawal Value</th>
-          <th scope="col">Avg Cost/Price</th>
+          <th scope="col">Cost Value/Price</th>
           <th scope="col">Swap Price</th>
           <th scope="col">Unrealized</th>
           <th scope="col">Imp Loss</th>
