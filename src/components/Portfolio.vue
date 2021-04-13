@@ -55,7 +55,7 @@ query{
 const GET_TXS = gql`
 query Address($waddress: String!) 
 {
-  txs(account: $waddress, limit: 3000){
+  txs(account: $waddress, limit: 10000){
     id
     type
     data
