@@ -5,20 +5,31 @@
     -->
     <wallet-address @eventUpd="updAddress"></wallet-address>
 <!--
-    <h3>{{ test }}<br>{{
-    parseInt(test.substr(test.indexOf(',')+1,test.indexOf('terra')-test.indexOf(',')-1))/100000
-    }}
+    <h3 v-for="tx in LPStaked.my" :key="tx.token" :waddress="waddress">
+      {{
+        to4(LPStaked.all) 
+      }}
+      {{
+        LPStaked.my[LPStaked.my.findIndex((r) => r.amount >300)].amount
+      }}
+      {{
+        LPStaked.my.some((r)=>r.token === "terra1227ppwxxj3jxz8cfgq00jgnxqcny7ryenvkwj6")
+      }}
+      {{
+        to4(tx.amount)
+      }}
     </h3>
 -->
-    <txs v-for="tx in sumliquidation" :key="tx.token" :tx="tx"></txs> 
+    <txs v-for="tx in sumliquidation" :key="tx.token" :tx="tx" :waddress="waddress" :mir="mir"></txs> 
 
 <!--
     <h3 v-for="tx in sumliquidation" :key="tx.token"> {{ asset.symbol }} {{ tx.token }} Cost {{ tx.masset }} + {{ tx.ust }}</h3>
 
 -->
 
-
-    <portfolio-item v-for="asset in assets" :key="asset.symbol" :asset="asset"></portfolio-item>
+   <!-- <portfolio-item v-for="m in mir" :key="m.symbol" :m="m"></portfolio-item> -->
+   <portfolio-item v-for="asset in assets" :key="asset.symbol" :asset="asset"></portfolio-item>
+   
     <!--<h3 v-for="liq in sumliquidation" :key="liq.id">{{ liq.id }}</h3>-->
     <!-- <h3>{{ assets }}</h3> -->
     <!--<h3>{{ sumliquidation }}</h3>-->
@@ -37,10 +48,14 @@ const GET_ASSETS = gql`
 query{ 
   assets{
     symbol
+    token
     name
     prices{
       price,
       oraclePrice
+    }
+    positions{
+      lpStaked
     }
   }
 }
@@ -60,6 +75,33 @@ query Address($waddress: String!)
 }
 `;
 
+const GET_MIR = gql`
+query{ 
+  asset(token: "terra15gwkyepfc6xgca5t5zefzwy42uts8l2m4g40k6")
+  {
+    symbol
+    name
+    token
+    pair
+    lpToken
+    prices{
+      price,
+      oraclePrice
+    }
+    positions{
+      pool
+      uusdPool
+      lpShares
+      lpStaked
+    }
+    statistic{
+      apr
+      apy
+    }
+  }
+}
+`;
+
 
 export default {
   components: { PortfolioItem, Txs , 'wallet-address': WalletAdress},
@@ -69,7 +111,8 @@ export default {
     return {
       assets: [],
       txs: [],
-      test: "3143112557uusd, 6165013terra1jsxngqasf2zynj5kyh0tgq9mj3zksa5gk35j4k",
+      mir: [],
+      //test: "3143112557uusd, 6165013terra1jsxngqasf2zynj5kyh0tgq9mj3zksa5gk35j4k",
       waddress: ""
     };
   },
@@ -126,16 +169,41 @@ export default {
 
         //.map(tx => tx.data.share)
         //.reduce((acc,tx) => acc + parseInt(tx.data.share)/1000000,0)
+      },
+      LPStaked: function() {
+        let result = 
+          { 
+          all: this.assets.reduce((acc,item) => acc +  (parseInt(item.positions.lpStaked)/1000000),0),
+          my: this.txs.filter(tx => tx.type === "STAKE").map(function(tx) {
+             return { token: tx.token, amount: tx.data.amount/1000000, type: tx.data.type } 
+             })/*.reduce(function(r, tx) {
+               if(r.some(rtx => rtx.token === tx.token)){
+                 console.log(r);
+                 return r[r.findIndex((rtx)=> rtx.token === tx.token)].amount += tx.amount;
+               } else {
+                 return { token: tx.token, amount: tx.amount}
+               }
+             },[]) */
+          }
+        ;
+        return result;
       }
   },
   methods: {
     updAddress(value) {
       this.waddress = value;
-    }
+    },
+    to4: function(num){
+      return Math.round(num*10000)/10000;
+    },
   },
   apollo: {
     assets: {
       query: GET_ASSETS
+    },
+    mir: {
+      query: GET_MIR,
+      update: data => data.asset
     },
     txs: {
       query: GET_TXS,

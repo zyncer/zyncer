@@ -2,7 +2,9 @@
 <!--
   <div :key="txs.id">-->
     <div :key="tx.token" v-if="to4(toPercent(tx.share,toNumber(asset.positions.lpShares))) != 0">
+    <!-- {{ stakeinfo }} <br> {{ poolinfo }} <br> {{ reward }} -->
       <h4><b>{{ asset.symbol }}</b> APR: {{ to3(asset.statistic.apr*100) }}% APY: {{ to3(asset.statistic.apy*100) }}%</h4>
+      <h6>Stake Position ({{ parseInt(stakeinfo[0].bond_amount)/1000000 }}) | Unclaimed ({{ to4(reward) }} MIR ~ {{ to4(reward* Number(mir.prices.price)) }}ust )</h6>
       <h5>Average Cost ({{ Math.round(tx.masset*10000)/10000 }}{{ asset.symbol }} + {{ to4(tx.ust) }}ust) Price {{ to4(tx.ust/tx.masset) }}ust
         LP {{ to4(tx.share) }} | Pool Share {{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))) }}
         <br>
@@ -73,15 +75,25 @@ query TokenStr($token: String!) {
   }
 }
 `;
+//import { LCDClient } from '@terra-money/terra.js';
+import { Mirror } from '@mirror-protocol/mirror.js';
+
+const mirror = new Mirror();
 
 export default {
   name: "Txs",
   //props: ["txs"],
-  props: ["tx"],
+  props: ["tx","waddress","mir"],
   data() {
     return {
-      asset: []
+      asset: [],
+      stakeinfo: [], 
+      poolinfo: [],
+      reward: 0
     };
+  },
+  created() {
+    this.rewardInfo(this.waddress, this.tx.token)
   },
   methods:{
     toNumber: function(num){
@@ -101,14 +113,38 @@ export default {
     },
     marketPrice(pool,uusd){
       return (parseInt(uusd)/1000000)/(parseInt(pool)/1000000)
+    },
+    rewardInfo: async function(address,token) {
+        let txt = '';
+        const rewardData = await mirror.staking.getRewardInfo(address,token);
+        const rewardInfos = rewardData.reward_infos;
+        console.log('\n\nR E W A R D DATA:\n');
+        console.log(rewardInfos);
+        this.stakeinfo = rewardInfos;
+        //txt+= rewardInfos;
+        
+        for (const [key, tokenData] of Object.entries(rewardInfos)) {
+            console.log(key);
+            const poolData = await mirror.staking.getPoolInfo(tokenData.asset_token);
+            //const poolData = await mirror.staking.getPoolInfo(token);
+            console.log('\n\nP O O L DATA:\n');
+            console.log(poolData); console.log('\n');
+            this.poolinfo = poolData;
+            //const rewardToClaim = (poolData.reward_index - tokenData.index) * tokenData.bond_amount + tokenData.pending_reward;
+            const rewardToClaim = (Number(poolData.reward_index) - Number(tokenData.index)) * Number(tokenData.bond_amount) + Number(tokenData.pending_reward);
+            this.reward = rewardToClaim/1000000; 
+            //txt+=`Pool: ${tokenData.asset_token}\n`;
+            //txt+=`Staked: ${tokenData.bond_amount/1000000}\n` + '\u001b[' + 33 + 'm';
+            //txt+=`RewardToClaim: ${rewardToClaim/1000000}\n`+ '\u001b[0m\n\n';
+        }
+
+        return txt;
     }
   },
-  /*
+  
   computed: {
-    token: function(){
-      return this.txs.token
-    }
-  },*/
+
+  },
   apollo: {
     asset: {
       query: GET_ASSET,

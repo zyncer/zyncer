@@ -5,9 +5,14 @@ import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
+import { LCDClient } from '@terra-money/terra.js';
+import { Mirror } from '@mirror-protocol/mirror.js';
+
 import VueApollo from 'vue-apollo';
 
 Vue.config.productionTip = false
+
+const mirror = new Mirror();
 
 const httpLink = new HttpLink({
   uri: 'https://graph.mirror.finance/graphql'
@@ -28,5 +33,6 @@ const apolloProvider = new VueApollo({
 new Vue({
   el: '#app',
   apolloProvider,
+  mirror,
   render: h => h(App)
 });
