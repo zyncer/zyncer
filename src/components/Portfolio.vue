@@ -183,8 +183,11 @@ export default {
   },
   methods: {
     updAddress(value) {
-      this.waddress = value;
-      this.totalreward = 0;
+      if(value != this.waddress)
+      {
+        this.totalreward = 0;
+        this.waddress = value;
+      }     
     },
     updateTotal(value) {
       this.totalreward += value;
