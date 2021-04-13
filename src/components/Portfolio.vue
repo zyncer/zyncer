@@ -184,6 +184,7 @@ export default {
   methods: {
     updAddress(value) {
       this.waddress = value;
+      this.totalreward = 0;
     },
     updateTotal(value) {
       this.totalreward += value;
