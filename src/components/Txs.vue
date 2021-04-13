@@ -4,7 +4,7 @@
     <div :key="tx.token" v-if="to4(toPercent(tx.share,toNumber(asset.positions.lpShares))) != 0">
     <!-- {{ stakeinfo }} <br> {{ poolinfo }} <br> {{ reward }} -->
       <h4><b>{{ asset.symbol }}</b> APR: {{ to3(asset.statistic.apr*100) }}% APY: {{ to3(asset.statistic.apy*100) }}%</h4>
-      <h6>Stake Position ({{ parseInt(stakeinfo[0].bond_amount)/1000000 }}) | Unclaimed ({{ to4(reward) }} MIR ~ {{ to4(reward* Number(mir.prices.price)) }}ust )</h6>
+      <h6>Stake Position ({{ to4(parseInt(stakeinfo[0].bond_amount)/1000000) }}) | Unclaimed ({{ to4(reward) }} MIR ~ {{ to4(reward* Number(mir.prices.price)) }}ust )</h6>
       <h5>Average Cost ({{ Math.round(tx.masset*10000)/10000 }}{{ asset.symbol }} + {{ to4(tx.ust) }}ust) Price {{ to4(tx.ust/tx.masset) }}ust
         LP {{ to4(tx.share) }} | Pool Share {{ to4(toPercent(tx.share,toNumber(asset.positions.lpShares))) }}
         <br>
