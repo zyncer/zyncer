@@ -1,5 +1,5 @@
 <template>
-  <tr :key="tx.token" v-if="to4(toPercent(tx.share,toNumber(asset.positions.lpShares))) != 0">
+  <tr :key="tx.token" v-if="to5(toPercent(tx.share,toNumber(asset.positions.lpShares))) != 0">
     <!-- {{ stakeinfo }} <br> {{ poolinfo }} <br> {{ reward }} -->
  
       <th scope="row">{{ asset.symbol }} <footer id="apr" class="blockquote-footer">Apr: {{ to3(asset.statistic.apr*100) }}% </footer></th>
@@ -106,6 +106,9 @@ export default {
     },
     to4: function(num){
       return Math.round(num*10000)/10000;
+    },
+    to5: function(num){
+      return Math.round(num*100000)/100000;
     },
     percentChange(newnum,orignum){
       return (newnum*2-orignum*2)/(orignum*2)*100;
