@@ -1,39 +1,22 @@
 <template>
   <div id="portfolio">
-    <!--
-    <txs v-for="txs in txs" :key="txs.id" :txs="txs"></txs>
-    -->
     <wallet-address @eventUpd="updAddress"></wallet-address>
-<!--
-    <h3 v-for="tx in LPStaked.my" :key="tx.token" :waddress="waddress">
-      {{
-        to4(LPStaked.all) 
-      }}
-      {{
-        LPStaked.my[LPStaked.my.findIndex((r) => r.amount >300)].amount
-      }}
-      {{
-        LPStaked.my.some((r)=>r.token === "terra1227ppwxxj3jxz8cfgq00jgnxqcny7ryenvkwj6")
-      }}
-      {{
-        to4(tx.amount)
-      }}
-    </h3>
--->
-    <h3 v-if="waddress">Total Unclaimed: {{ to4(totalreward) }} mir ~  {{ to4(totalreward* Number(mir.prices.price)) }} ust</h3>
-    <table v-if="waddress" class="table table-dark">
-      <thead>
+    <h4 class="font-weight-bold alert alert-success" v-if="waddress">Total Unclaimed: {{ to4(totalreward) }} mir
+      <footer class="blockquote-footer">{{ to4(totalreward* Number(mir.prices.price)) }} USD ~ {{ to4(totalreward* Number(mir.prices.price)*33) }} THB</footer>
+    </h4>
+    <table v-if="waddress" class="table table-striped table-bordered table-dark">
+      <thead class="thead-light">
         <tr>
           <th scope="col">Symbol</th>
           <th scope="col">LP Balance/Staked</th>
           <th scope="col">Withdrawal Pair</th>
           <th scope="col">Pool Share</th>
           <th scope="col">Withdrawal Value</th>
-          <th scope="col">Average Cost/Price</th>
+          <th scope="col">Avg Cost/Price</th>
           <th scope="col">Swap Price</th>
           <th scope="col">Unrealized</th>
           <th scope="col">Imp Loss</th>
-          <th scope="col">Unclaimed Reward</th>
+          <th scope="col">Unclaimed</th>
         </tr>
       </thead>
       <tbody>
@@ -41,16 +24,7 @@
       </tbody>
     </table>
 
-<!--
-    <h3 v-for="tx in sumliquidation" :key="tx.token"> {{ asset.symbol }} {{ tx.token }} Cost {{ tx.masset }} + {{ tx.ust }}</h3>
-
--->
-
-   <!-- <portfolio-item v-for="m in mir" :key="m.symbol" :m="m"></portfolio-item> -->
    <portfolio-item v-for="asset in assets" :key="asset.symbol" :asset="asset"></portfolio-item>
-    <!--<h3 v-for="liq in sumliquidation" :key="liq.id">{{ liq.id }}</h3>
-    <h3>{{ assets }}</h3> 
-    <h3>{{ sumliquidation }}</h3>-->
 
   </div>
 </template>
@@ -245,6 +219,11 @@ export default {
   margin-left: 0;
 }
 thead {
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
+tbody {
+  font-size: 1.2rem;
+}
+
+
 </style>

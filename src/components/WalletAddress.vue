@@ -1,9 +1,9 @@
 <template>
-<div id="forms" class="w-75 p-3 mb-1 text-light lead">
+<div id="forms" class="w-75 p-3 mb-1 text-light">
     <fieldset>
-      <input type="text" placeholder="Wallet Address" v-model="waddress">
+      <input type="text" placeholder="Wallet Address" v-model="waddress" class="form-control" id="addr">
     </fieldset>
-    <input class="button-primary" type="button" value="Query" @click="$emit('eventUpd', waddress)">
+    <input class="btn btn-block btn-success" type="button" value="Query" @click="$emit('eventUpd', waddress)" id="submitAddr">
 </div>
 </template>
 
@@ -22,7 +22,15 @@ export default {
   position:relative;
   margin-left: 12.5%;
 }
-input {
-  margin-bottom: 10px;
+#addr {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  background-color: black;
+  color: greenyellow;
 }
+#submitAddr {
+  font-size: 1.4rem;
+  font-style:initial;
+}
+
 </style>

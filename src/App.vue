@@ -28,11 +28,8 @@ export default {
   margin-top: 0px;
   margin-bottom: 0px;
 }
-input, select, textarea{
-    color:#ffffff;
-}
 html, body {
   background: #000;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 </style>
