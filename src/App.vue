@@ -13,6 +13,9 @@ export default {
   name: 'App',
   components: {
     Portfolio
+  },
+  created() {
+    document.title = "Mirror Portfolio"
   }
 }
 </script>
