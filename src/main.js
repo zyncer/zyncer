@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import App from './App.vue';
+//import { createdRouter } from 'vue-router';
+
 //import { createProvider } from './vue-apollo';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
@@ -15,6 +17,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import VueApollo from 'vue-apollo';
 
 Vue.config.productionTip = false
+
+//const router = createdRouter();
 
 const mirror = new Mirror();
 
@@ -40,5 +44,6 @@ new Vue({
   el: '#app',
   apolloProvider,
   mirror,
+  // router,
   render: h => h(App)
 });
